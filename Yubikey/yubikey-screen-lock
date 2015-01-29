@@ -1,0 +1,77 @@
+#!/bin/bash
+log="/var/log/yubilock.log"
+yubimap="/etc/yubikeys"
+user=$(ps aux | grep -v root | grep session | head -n 1 | awk '{print $1}')
+
+check_gnome=$(ps -aux | awk '{print $11}' | grep ^gnome-session)
+if [[ -n $check_gnome ]] ; then
+	DESKTOP=gnome
+	sessionid=$(/bin/loginctl list-sessions | grep ${user} | awk '{print $1}')
+fi
+
+check_cinnamon=$(ps -aux | awk '{print $11}' | grep ^cinnamon-session)
+if [[ -n $check_cinnamon ]] ; then
+	DESKTOP=cinnamon
+fi
+
+check_lxde=$(ps -aux | awk '{print $11}' | grep lxsession)
+if [[ -n $check_lxde ]] ; then
+	DESKTOP=lxde
+fi
+
+check_xfce=$(ps -aux | awk '{print $11}' | grep ^xfce4-session)
+if [[ -n $check_xfce ]] ; then
+	DESKTOP=xfce
+fi
+
+check_kde=$(ps -aux | awk '{print $11}' | grep kded4)
+if [[ -n $check_kde ]] ; then
+	DESKTOP=kde
+fi
+
+echo "$(date) $(whoami) '$0' '$1' | Desktop Environment = '$DESKTOP'" >> ${log}
+case "$1" in
+        enable)
+                if [ -n ${user} -a "$(grep -c ${user}:000$(ykinfo -q -s) ${yubimap})" == "1" ] ; then
+		pkill -u ${user} -SIGHUP gpg-agent
+                case $DESKTOP in
+                        gnome)
+                                /bin/loginctl lock-session $sessionid
+                        ;;
+                        cinnamon)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/cinnamon-screensaver-command -a"
+                        ;;
+                        lxde)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -activate"
+                        ;;
+                        xfce)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xflock4"
+                        ;;
+                        kde)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -activate"
+                        ;;
+                esac
+                fi
+        ;;
+        disable)
+                if [ -n ${user} -a "$(grep -c ${user}:000$(ykinfo -q -s) ${yubimap})" == "1" ] ; then
+                case $DESKTOP in
+                        gnome)
+                                /bin/loginctl unlock-session $sessionid
+                        ;;
+                        cinnamon)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/cinnamon-screensaver-command -d"
+                        ;;
+                        lxde)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -deactivate"
+                        ;;
+                        xfce)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -deactivate"
+                        ;;
+                        kde)
+                                /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -deactivate"
+                        ;;
+                esac
+                fi
+        ;;
+esac
