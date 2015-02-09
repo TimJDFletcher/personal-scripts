@@ -14,5 +14,4 @@ LABEL="yubico_end"
 
 # Call a script on removal to lock screensavers and drop cached passwords
 SUBSYSTEM=="usb", ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}="0010|0110|0111|0114|0116", RUN+="/usr/local/bin/yubikey-screen-lock enable"
-# SUBSYSTEM=="usb", ACTION=="add", ENV{ID_VENDOR_ID}=="1050", ENV{ID_MODEL_ID}=="0010", RUN+="/usr/local/bin/yubikey-screen-lock disable"
 
