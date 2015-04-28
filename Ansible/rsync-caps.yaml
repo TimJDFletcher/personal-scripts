@@ -1,0 +1,34 @@
+---
+- hosts: debian
+  sudo: false
+  remote_user: root
+  tasks:
+  - name: Install support packages
+    apt: pkg={{item}} state=latest
+    with_items:
+    - libcap2-bin
+    - libpam-cap
+    - rsync
+  # The enables libcap2 in pam, but can also break pam be careful!
+  - command: pam-auth-update --package --force
+  - name: Set cap_dac_read_search+ei on /usr/bin/rsync
+    capabilities: path=/usr/bin/rsync 
+                  capability=cap_dac_read_search+ei
+                  state=present
+  - name: Create backup helper user
+    user: name=backuphelper 
+          comment="Backup helper for rsync" 
+          system=yes
+  - name: Add ssh keys to backuphelper
+    authorized_key: user=backuphelper 
+                    key="{{ lookup("file", "/home/tim/.ssh/yubikey.pub") }}"
+    # Note this assumes the conf file hasn"t been changed, inserting before ^none  * or just pushing a config file might be better
+  - lineinfile: "dest=/etc/security/capability.conf insertafter='^#cap_dac_override\tluser' line='## user backuphelper inherits the CAP_DAC_READ_SEARCH capability'"
+  - lineinfile: "dest=/etc/security/capability.conf insertafter='^## user backuphelper inherits the CAP_DAC_READ_SEARCH capability' line='cap_dac_read_search backuphelper'"
+  - name: Insert safety setting to sshd config
+    lineinfile: dest=/etc/ssh/sshd_config
+                insertafter=EOF
+                line="{{ item }}"
+    with_items: 
+      - "Match User backuphelper"
+      - "PasswordAuthentication no"
