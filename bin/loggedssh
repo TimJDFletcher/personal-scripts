@@ -1,0 +1,8 @@
+#!/bin/sh
+logfile=/var/log/ssh/$(date +%Y%m%d%H%M)-$$.log
+echo "ssh session logging to $logfile"
+echo "Commandline: $*" >> $logfile
+echo "Date: $(date)" >> $logfile
+echo "---- ssh session begins ----" >> $logfile
+ssh $* | tee -a $logfile
+echo "ssh session has been logged to $logfile"

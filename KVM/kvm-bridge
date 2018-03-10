@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+ # script to manage tap interface allocation
+ # for linux kernels >= 2.6.18
+
+ # modified by bodhi.zazen from :
+ # http://calamari.reverse-dns.net:980/cgi-bin/moin.cgi/FrequentlyAskedQuestions#head-2511814cb92c14dbe1480089c04f83c281117a86
+ # http://ubuntuforums.org/showthread.php?t=528046
+ # http://www.howtoforge.com/using-kvm-on-ubuntu-gutsy-gibbon
+
+ # set up a tap interface for qemu
+ # USERID - uid qemu is being run under.
+ USERID=`whoami`
+
+ # generate a random mac address for the qemu nic
+ # shell script borrowed from user pheldens @ qemu forum
+
+ ranmac=$(echo -n DE:AD:BE:EF ; for i in `seq 1 2` ; \
+ do echo -n `echo ":$RANDOM$RANDOM" | cut -n -c -3` ;done)
+
+ # specify which NIC to use - see qemu.org for others
+ # model=r8169
+ # Set model based on this how-to
+ # http://www.howtoforge.com/using-kvm-on-ubuntu-gutsy-gibbon
+
+ model=rtl8139
+ iface=`sudo tunctl -b -u $USERID`
+
+ # start kvm with our parameters
+ # echo "Bringing up interface $iface with mac address $ranmac"
+ # nohup added to allow kvm to run independent of the terminal
+ nohup kvm -net nic,vlan=0,macaddr=$ranmac -net tap,vlan=0,ifname=$iface $@
+
+ # kvm has stopped - no longer using tap interface
+ sudo tunctl -d $iface &> /dev/null

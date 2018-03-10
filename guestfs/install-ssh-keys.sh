@@ -1,0 +1,8 @@
+#!/bin/sh
+export umask=0077
+
+mkdir -p /root/.ssh
+cat <<'EOF' > /root/.ssh/authorized_keys
+# Tim F Yubikey
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUrCV4m1Ix3NAxB4jB7o4NCsQ/jiFnXPnBmnCi/EBvx+NFCJMAavdzjTxHOILf99bQ6eeB2TF3mhnu3BiinGX4OVSCYpod2qjWbdtn6nbSyFvQLntIjX2pU8K/2FkP6dB+Xx7hw9O/ByneRJQNPxjw0L5PHAYTpSxXQZIjtdksHUWlECvfUI9eLxrROAGtF8uXu+8skxBuhoyNV3wLC8ehhGiK6Z4j/OMihFWpIHiUFJTwZtw42+TogzX1E/TBoLCEVu4etGbgeoW17cY0IneJWfWqfhIgv5Zs6WX2ZwFUsYfurcgjKVudTgYyAHcMb7lCHPSv5iXGjEzSmdutTGpj cardno:000604908467
+EOF

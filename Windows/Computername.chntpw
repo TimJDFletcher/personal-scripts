@@ -1,0 +1,5 @@
+cd \ControlSet001\Control\ComputerName\ComputerName
+cat ComputerName
+q
+y
+

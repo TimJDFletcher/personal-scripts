@@ -1,0 +1,10 @@
+#!/bin/sh
+tmpfile=$(mktemp /tmp/ubuntu-14.04.raw.XXXXXX)
+
+virt-builder \
+--cache /var/lib/libvirt/images/virt-builder/ \
+-o $tmpfile \
+--run scripts/guestfs/install-ssh-keys.sh \
+--firstboot-command "dpkg-reconfigure openssh-server" \
+--format raw --arch amd64 --size 20G ubuntu-14.04
+

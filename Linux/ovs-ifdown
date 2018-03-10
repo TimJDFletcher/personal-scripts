@@ -1,0 +1,4 @@
+#!/bin/sh
+switch=internal
+sudo /usr/bin/ovs-vsctl del-port ${switch} $1
+

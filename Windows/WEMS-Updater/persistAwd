@@ -1,0 +1,5 @@
+#!/bin/sh
+
+if [ -x /mnt/bin/awd_agentV2 ]; then
+  cp /mnt/bin/awd_agentV2 /mnt/bin/awd_agent
+fi

@@ -1,0 +1,7 @@
+#!/bin/sh
+waittime=10
+while ! ssh -o "ConnectTimeout=10" $* ; do 
+	date 
+	echo Trying again in $waittime seconds
+	sleep $waittime 
+done

@@ -1,0 +1,18 @@
+#!/bin/sh
+basedir=$HOME/daylog
+file="$(date +%d)"
+dir="$basedir/$(date +%Y/%m)"
+if [ x$EDITOR=x ] ; then
+    export EDITOR=vim
+fi
+mkdir -p $dir
+
+if [ ! -e $dir/$file ] ; then
+    echo "Log file for: $(date)" > $dir/$file
+    echo >> $dir/$file
+fi
+
+$EDITOR $dir/$file
+echo "---" >> $dir/$file
+date >> $dir/$file
+echo "---" >> $dir/$file

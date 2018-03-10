@@ -33,10 +33,7 @@ echo "$(date) $(whoami) '$0' '$1' | Desktop Environment = '$DESKTOP'" >> ${log}
 case "$1" in
         enable)
                 if [ -n ${user} -a "$(grep -c ${user}:000$(ykinfo -q -s) ${yubimap})" == "1" ] ; then
-		# HUP gpg-agent so it drops all password caches
 		pkill -u ${user} -SIGHUP gpg-agent
-		# Remove cached sudo cookie, forcing a password request
-                if which sudo >/dev/null ; then sudo -H -u ${user} sudo -K ; fi
                 case $DESKTOP in
                         gnome)
                                 /bin/loginctl lock-session $sessionid

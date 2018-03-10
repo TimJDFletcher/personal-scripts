@@ -1,0 +1,15 @@
+#!/bin/sh
+
+dir=$HOME/Dropbox/todo
+mkdir -p $dir
+
+if [ -z $1 ] ; then 
+	file="$dir/personal"
+else
+	file="$dir/$1"
+fi
+
+vim $file
+echo "-----" >> $file
+echo "Todo file on $(date)" >> $file
+echo "-----" >> $file
