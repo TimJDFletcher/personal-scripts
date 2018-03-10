@@ -1,30 +1,22 @@
 #!/bin/sh
+packages="vim openvpn rsync empty mjpg-streamer bmon tc ip"
+modules="iptables-mod-conntrack-extra kmod-leds-wndr3700-usb kmod-video-uvc"
+services="openvpn mjpg-streamer"
+
 if [ -f /.install.completed ] ; then
 	echo Install already completed
 	exit 0
 fi
 
-services_disable="dnsmasq"
-services_enable="zram"
-
-for service in $services_disable ; do
-	/etc/init.d/$service stop
-	/etc/init.d/$service disable
-done
-
 opkg update
-opkg install rsync nano tc ip bmon zram-swap
+opkg install $modules
+opkg install $packages
 
-
-for service in $services_disable ; do
-	/etc/init.d/$service stop
-	/etc/init.d/$service disable
-done
-
-for service in $services_enable ; do
+for service in $services ; do 
 	/etc/init.d/$service enable
 	/etc/init.d/$service start
 done
 
-touch /.install.completed
+/etc/init.d/firewall restart
 
+touch /.install.completed

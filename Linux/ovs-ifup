@@ -1,0 +1,6 @@
+#!/bin/sh
+switch=internal
+sudo /usr/bin/ovs-vsctl add-port ${switch} $1 # -- set interface $1 type=internal
+sudo /sbin/ip link set up dev $1
+sudo /sbin/ip link set promisc on dev $1
+

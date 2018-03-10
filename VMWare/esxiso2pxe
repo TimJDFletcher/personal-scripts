@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# esxiso2pxe - quickly extract contents of ESXi ISO image for use on a PXE server
+# 17Mar2014 - egray
+
+if [ $# != 3 ]; then
+        echo "Usage: $0 <tftpboot dir> <new dir name> <ESXi ISO file>" >&2
+        exit 1
+fi
+
+tftpbootdir=$1
+newdir=$2
+newiso=$3
+tmpesxi=`mktemp -d`
+
+if [ ! -d $tftpbootdir ]; then echo "Error: $tftpbootdir not found." ; exit 1 ; fi
+if [ -d $tftpbootdir/$newdir ]; then echo "Error: $tftpbootdir/$newdir already exists!" ; exit 1 ; fi
+if [ ! -r $newiso ]; then echo "Error: $newiso not found or not readable!" ; exit 1 ; fi
+
+mkdir -v $tftpbootdir/$newdir
+mount -o loop $newiso $tmpesxi/
+rsync -av $tmpesxi/ $tftpbootdir/$newdir/
+sync && umount $tmpesxi && rmdir -v $tmpesxi
+
+chmod +w $tftpbootdir/$newdir/*
+sed -e "s#/##g" -e "3s#^#prefix=/$newdir/\n#" -i.bak $tftpbootdir/$newdir/boot.cfg
+
+echo "Use the following for PXE menu:"
+cat <<HERE | tee -a $tftpbootdir/esxi-submenu
+LABEL $newdir
+  KERNEL /$newdir/mboot.c32
+  APPEND -c /$newdir/boot.cfg
+  MENU LABEL ESXi $newdir - `basename $newiso` `date +%D`
+
+HERE

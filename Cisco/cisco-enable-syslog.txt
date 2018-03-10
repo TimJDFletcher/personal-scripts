@@ -1,0 +1,6 @@
+configure terminal 
+service timestamps log datetime
+logging host 10.0.6.33
+logging trap 5
+exit
+exit

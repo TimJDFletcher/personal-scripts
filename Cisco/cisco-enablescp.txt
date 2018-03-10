@@ -1,0 +1,4 @@
+configure terminal
+ip scp server enable
+exit
+exit

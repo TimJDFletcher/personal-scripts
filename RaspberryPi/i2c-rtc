@@ -1,0 +1,88 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          i2c-rtc
+# Required-Start:
+# Required-Stop:     umountroot
+# Should-Stop:
+# X-Start-Before:    checkroot
+# Default-Start:     S
+# Default-Stop:      0 1 6
+# Short-Description: Start up RTCs on the i2c bus
+# Description:
+### END INIT INFO
+
+set -e
+
+# Include core init functions if needed
+. /lib/lsb/init-functions
+
+# Set defaults, override in the parm file
+HCTOSYS_DEVICE=rtc0
+RTCTYPE=ds1307
+SETTIME=true
+
+PARAM=/etc/default/i2c-rtc
+if [ -f $PARAM ]; then
+    . "$PARAM"
+fi
+
+init_rtc_device()
+{
+    [ -e /dev/$HCTOSYS_DEVICE ] && return 0;
+    # load i2c kernel module
+    modprobe i2c-bcm2708
+    # iterate over every i2c bus as we're supporting Raspberry Pi rev. 1 and 2
+    for bus in $(find /sys/bus/i2c/devices -type l -name 'i2c*'); do
+	echo "$RTCTYPE" 0x68 >> $bus/new_device
+	sleep 1 # give i2c drivers time to settle
+	if [ -e /dev/$HCTOSYS_DEVICE ] ; then
+	    log_action_msg "RTC found on bus $(cat $bus/name)"
+	    if [ "$SETTIME"="true" ] ; then
+		log_action_msg "Setting time from $HCTOSYS_DEVICE"
+		/sbin/hwclock --hctosys --rtc=/dev/$HCTOSYS_DEVICE
+	    fi
+	    break # RTC found, bail out of the loop
+	else
+	    echo 0x68 >> $bus/delete_device
+	fi
+    done
+}
+
+remove_rtc_device()
+{
+    if [ -e /dev/$HCTOSYS_DEVICE ] ; then
+	if [ "$SETTIME"="true" ] ; then
+	    log_action_msg "Saving time to $HCTOSYS_DEVICE"
+	    /sbin/hwclock --systohc --rtc=/dev/$HCTOSYS_DEVICE
+	else
+	    return 0
+	fi
+    fi
+    # iterate over every i2c bus as we're supporting Raspberry Pi rev. 1 and 2
+    for bus in $(find /sys/bus/i2c/devices -type l -name 'i2c*'); do
+	log_action_msg "Removing RTC from bus $(cat $bus/name)"
+	echo 0x68 >> $bus/delete_device
+    done
+}
+
+case "${1:-}" in
+    stop)
+	echo "Stopping i2c RTC:"
+	remove_rtc_device
+	;;
+    reload|restart|force-reload)
+	echo "Stopping i2c RTC:"
+	remove_rtc_device
+	echo "Starting i2c RTC:"
+	init_rtc_device
+	;;
+    start)
+	echo "Starting i2c RTC:"
+	init_rtc_device
+	;;
+    *)
+	echo "Usage: ${0:-} {start|stop|status|restart|reload|force-reload}" >&2
+	exit 1
+	;;
+esac

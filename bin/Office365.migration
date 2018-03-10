@@ -1,0 +1,28 @@
+From: it@wems.co.uk
+To: %EMAIL%
+Subject: Office 365 Email Migration
+Mime-Version: 1.0
+Content-Type: text/html
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head><title></title>
+</head>
+<body>
+
+<p>WEMS are migrating to Microsoft Office365, as part of this process over the weekend (11/12 of July 2015) we are moving all email to Office365. We have sucessfully trialed this migration process and will be beginning the full migration at 7pm tonight. You may notice some disruption to your email over the weekend.</p>
+
+<p>On Monday morning please <b>reboot</b> your laptop (Start Menu -> Shutdown -> restart)</p>
+
+<p>If you have configured your mobile device to access your WEMS email please delete and re-add the account.</p>
+
+<p> Note your username might not be the same as your email address, your username is <b>%USERNAME%</b></p>
+
+<p>If you normally access your email via a web broweser please go to <a href=https://365.wems.co.uk>https://365.wems.co.uk</a> this URL will work internally and externally.</p>
+
+<p><ul><li><a href=https://support.office.com/en-au/article/Set-up-email-on-iPhone-iPad-or-iPod-Touch-b2de2161-cc1d-49ef-9ef9-81acd1c8e234#BKMK_O365Exchange>How to configure your Apple iOS device</a></li>
+<li><a href=https://support.office.com/en-za/article/Set-up-email-on-an-Android-phone-or-tablet-886db551-8dfa-4fd5-b835-f8e532091872>How to configure your Andriod device</a></li></ul></p>
+
+</body>
+</html>
+

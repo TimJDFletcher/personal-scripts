@@ -1,0 +1,196 @@
+#!/usr/bin/perl
+#============================================================= -*-perl-*-
+#
+# BackupPC_verifyPool: Verify pool integrity
+#
+# DESCRIPTION
+#
+#   BackupPC_verifyPool tries to verify the integrity of the pool files,
+#   based on their file names, which are supposed to correspond to MD5
+#   digests calculated from the (uncompressed) length and parts of their
+#   (again uncompressed) contents.
+#   Needs to be run as backuppc user for access to the pool files and
+#   meta data.
+#
+#   Usage: BackupPC_verifyPool [-v] [-p] [-u] [-r range] [-s]
+#
+#   Options:
+#
+#     -v        Show what is going on. Without this flag, only errors found
+#               are displayed, which might be very boring. Use '-p' for a
+#               bit of entertainment without causing your tty to scroll so
+#               much.
+#     -p        Show more terse progress output.
+#     -u        Check the pool (uncompressed files), not the cpool
+#               (uncompressed files).
+#     -r range  Specify the pool range to check (see below). 'range'
+#               can be a Perl expression like '0 .. 255' or '0, 10, 30 .. 40'.
+#               Only safe characters allowed [\da-fA-F,.\s].
+#     -s        Show summary.
+#
+#   The pool range was chosen as in BackupPC_nightly as means to divide
+#   the possibly lengthy operation of verifying the pool into smaller
+#   steps. The full pool goes from 0 to 255, that's all you really need to
+#   know. For more information, see BackupPC_nightly from the BackupPC
+#   distribution.
+#
+# AUTHOR
+#   Holger Parplies  <wopp at parplies.de>
+#
+# VERSION
+#   $Id$
+#
+# COPYRIGHT
+#   Copyright (C) 2007  Holger Parplies
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#========================================================================
+
+
+use strict;
+use lib '/usr/share/backuppc/lib'; # Debian; change to fit your needs
+use BackupPC::Lib;
+use BackupPC::FileZIO;
+use Getopt::Std;
+use File::Find;
+
+# $ENV {PATH} = '/bin:/usr/bin';
+# chdir '.';
+
+my %opts = (
+	    v => 0,		# verbose output
+	    p => 0,		# terse progress output
+	    u => 0,		# pool (1) or cpool (0)
+	    r => '0 .. 255',	# range
+	    s => 0,		# show summary
+	   );
+
+unless (getopts ('vpur:s', \%opts)) {
+    die <<EOM;
+Usage: $0 [-v] [-p] [-u] [-r range] [-s]
+
+Options: -v         Verbose output of files being checked and result
+	 -p         Terse output of what is happening (counter)
+	 -u         Check uncompressed pool (pool instead of cpool)
+	 -r range   Check subset of pool (default whole pool = 0 .. 255).
+	            Use any valid Perl expression containing only numbers
+		    (octal or hexadecimal is ok), dots, commas and whitespace
+		    here.
+         -s         Show summary.
+EOM
+}
+
+# unbuffered output
+$| = 1;
+
+# some variables
+my $bpc = new BackupPC::Lib	# BackupPC object
+    or die "Can't create BackupPC object!\n";
+my $pooldir = $bpc -> {TopDir} . '/' . ($opts {u} ? 'pool' : 'cpool') . '/';
+				# Pool directory to check
+my @range;			# Pool range to check
+my $mismatch_count = 0;		# number of invalid files
+my $zero_count = 0;             # of these: number of zero length files
+my $file_count = 0;		# running file count for progress output
+my $md5;			# handle of MD5 object
+
+# # untaint range specification; NOTE THAT THIS IS NOT SECURE!
+# $opts {r} = $1
+#   if $opts {r} =~ /^(.*)$/;
+
+# check range specification
+die "Range specification '$opts{r}' contains insecure characters!\n"
+  if $opts {r} !~ /^[0-9a-fA-Fx.,\s]*$/;
+eval "\@range = ($opts{r});";
+if ($@) {
+  die "Range specification '$opts{r}' is invalid: $@\n";
+} elsif (not defined @range or @range == 0) {
+  die "Range specification '$opts{r}' is empty. Nothing to do.\n";
+} elsif (grep { $_ < 0 or $_ > 255 } @range) {
+  die "Range specification '$opts{r}' contains values outside (0 .. 255)\n";
+}
+
+# iterate over the specified part of the pool
+$md5 = new Digest::MD5
+  or die "Can't create MD5 object: $!\n";
+foreach my $i (@range) {
+  my $dir = sprintf '%s/%1x/%1x', $pooldir, int ($i / 16), $i % 16;
+  find (\&validate_pool_dir, $dir)
+    if -d $dir;
+}
+
+# Summary
+if ($opts {s}) {
+  printf "%d files in %d directories checked, %d had wrong digests, of these %d zero-length.\n",
+    $file_count, @range * 16, $mismatch_count, $zero_count;
+} elsif ($mismatch_count > 0) {
+  print "ERROR: $mismatch_count files in ", $opts {u} ? 'pool' : 'cpool',
+    ", range ($opts{r}), seem to be corrupt!\n";
+}
+
+# Return code
+exit $mismatch_count > 0 ? 1 : 0;
+
+# actual verification process
+sub validate_pool_dir {
+  my ($name_md5) = ($_ =~ /^([0-9a-fA-F]{32})/);
+  my $content_md5;
+
+  return			# ignore directories
+    if -d $File::Find::name;
+
+  $file_count ++;
+  if ($opts {p} and not $opts {v}) {
+    if (/^([0-9a-fA-F])([0-9a-fA-F])/) {
+      print "[$1$2 $file_count]\r";
+    } else {
+      print "[   $file_count]\r";
+    }
+  }
+
+  # since we are only reading the file, we can treat the 'compLevel' parameter
+  # of BackupPC::FileZIO::open as a boolean
+  my $fh = BackupPC::FileZIO -> open ($File::Find::name, 0, ! $opts {u});
+  if (defined $fh) {
+    my $buf;
+    my $bytes = $fh -> read (\$buf, 1024 * 1024 + 100);
+    if ($bytes > 1024 * 1024) {
+      # read complete file for determining length. Keep first 1MB in $buf,
+      # put total length into $bytes, read in 100KB chunks for lower mem usage
+      my $buf2;
+      my $new = 1;
+      while ($new > 0) {
+	$new = $fh -> read (\$buf2, 102400);
+	$bytes += $new;
+      }
+    }
+    $content_md5 = $bpc -> Buffer2MD5 ($md5, $bytes, \$buf);
+    if ($content_md5 ne $name_md5) {
+      # print ">$content_md5< != >$name_md5<\n";
+      printf "[%5d] %-36.36s (%10d) != %-32.32s\n", $file_count, $_, $bytes,
+	     $content_md5;
+      $mismatch_count ++;
+      $zero_count ++
+	if $bytes == 0;
+    } elsif ($opts {v}) {
+      printf "[%5d] %-36.36s (%10d) ok\n", $file_count, $_, $bytes;
+    }
+  } else {
+    # open failed, count as mismatch
+    print "$_: BackupPC::FileZIO::open failed!\n";
+    $mismatch_count ++;
+  }
+}

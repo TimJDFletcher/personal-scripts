@@ -1,0 +1,5 @@
+# Settings for i2c-rtc startup
+SETTIME=true
+HCTOSYS_DEVICE=rtc0
+RTCTYPE=ds3231
+

@@ -1,0 +1,61 @@
+#!/bin/bash
+log="/var/log/yubilock.log"
+yubimap="/etc/yubikeys"
+user=$(ps aux | grep -v root | grep session | head -n 1 | awk '{print $1}')
+gpglock=true
+
+check_gnome=$(ps -aux | awk '{print $11}' | grep ^gnome-session)
+check_cinnamon=$(ps -aux | awk '{print $11}' | grep ^cinnamon-session)
+check_lxde=$(ps -aux | awk '{print $11}' | grep lxsession)
+check_kde=$(ps -aux | awk '{print $11}' | grep kded4)
+
+if [[ -n $check_gnome ]] ; then
+    DESKTOP=gnome
+    sessionid=$(/bin/loginctl list-sessions | grep ${user} | awk '{print $1}')
+elif [[ -n $check_cinnamon ]] ; then
+    DESKTOP=cinnamon
+elif [[ -n $check_lxde ]] ; then
+    DESKTOP=lxde
+elif [[ -n $check_xfce ]] ; then
+    DESKTOP=xfce
+elif [[ -n $check_kde ]] ; then
+    DESKTOP=kde
+fi
+
+echo "$(date) $(whoami) '$0' '$1' | Desktop Environment = '$DESKTOP'" >> ${log}
+case "$1" in
+    remove)
+        if [ -n ${user} -a $(grep -c ^${user}: ${yubimap}) -ge 1 ]; then
+            if [ ${gpglock}=true ] ; then
+                pkill -u ${user} -SIGHUP gpg-agent
+            fi
+            case $DESKTOP in
+                gnome)
+                    /bin/loginctl lock-session $sessionid
+                    ;;
+                cinnamon)
+                    /bin/su ${user} -c "DISPLAY=:0 /usr/bin/cinnamon-screensaver-command -a"
+                    ;;
+                lxde)
+                    /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -activate"
+                    ;;
+                xfce)
+                    /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xflock4"
+                    ;;
+                kde)
+                    /bin/su ${user} -c "DISPLAY=:0 /usr/bin/xscreensaver-command -activate"
+                    ;;
+            esac
+        fi
+        ;;
+    add)
+        if [ -n ${user} -a "$(grep -c ${user}:$(ykinfo -q -s) ${yubimap})" == "1" ] ;  then
+            if [ ${gpglock} = true ] ; then
+                pkill -u ${user} -9 scdaemon
+            fi
+        fi
+        ;;
+    *)
+        echo "Usage: $0 add | remove"
+        ;;
+esac

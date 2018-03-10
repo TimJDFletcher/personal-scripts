@@ -1,0 +1,12 @@
+configure terminal
+no ip ssh pubkey-chain user tfletcher
+ip ssh pubkey-chain
+user tfletcher
+key-string
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/cHkrUc/BUWvWnhxDVlHyS9Qb1ioB3bFgF8mJsJkB5loIUB2xRu7HcHqDYH+H
+Lx4yIhTtQJeC3ArwiIH+hy9WXzWoJtGS4uoIYxNCEHAvq0WJZy+p9FqQzmLOQDEIg319JjITu4ypzDhKnmzAeXed54rV1dn9+z5q
+EwW2SAEp6P3qxSpvCIr0DHokAqFvGsjVGwULQUS63ajpEqaKhz/HXQzBGefz8VMHm5H1YACfzXaIw4At1Bs6fkTkULyUNuoHxuFV
+y+ltw9NJ8G2J/Lp3Hyhhw82au2QJc4heWcsqYD4iqQsdf2cZqgM8rJTYRcZ1Lb8fHsfQTjhpFku18dJ9 cardno:000603020768
+exit
+exit
+exit
