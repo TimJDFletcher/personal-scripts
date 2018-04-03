@@ -1,5 +1,5 @@
 #!/bin/bash -e
-HOST=oxygen
+HOST=${1:-oxygen-vpn}
 POOL=WDZBA365
 TARGET=backups/cubits
 SOURCE=
@@ -7,11 +7,14 @@ USER=root
 
 caffeinate sudo -E rsync \
     --rsh "ssh -F $HOME/.ssh/config" \
+    --compress \
     --archive \
     --hard-links \
     --partial \
+    --verbose \
     --progress \
     --one-file-system \
+    --numeric-ids \
     --ignore-errors \
     --inplace \
     --delete \
