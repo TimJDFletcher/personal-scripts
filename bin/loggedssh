@@ -1,5 +1,5 @@
 #!/bin/sh
-logfile=/var/log/ssh/$(date +%Y%m%d%H%M)-$$.log
+logfile=$HOME/Documents/ssh-logs/$(date +%Y%m%d%H%M)-$$.log
 echo "ssh session logging to $logfile"
 echo "Commandline: $*" >> $logfile
 echo "Date: $(date)" >> $logfile
