@@ -1,13 +1,13 @@
 #!/bin/sh
-SOURCEDIR=$(greadlink -f ${1:-./})
 ORIGDIR=$(pwd)
-OS=$(uname -s)
-case $OS in
+case $(uname -s) in
     Darwin)
         FINDCMD=gfind
+        SOURCEDIR=$(greadlink -f ${1:-./})
         ;;
     Linux)
         FINDCMD=find
+        SOURCEDIR=$(readlink -f ${1:-./})
         ;;
     *)
         echo Unknown OS $OS, exiting
