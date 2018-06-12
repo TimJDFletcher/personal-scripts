@@ -20,7 +20,7 @@ for dir in $(find $SOURCEDIR -mindepth 1 -maxdepth 3 -type d -name .bzr ); do
 done
 
 for dir in $(find $SOURCEDIR -mindepth 1 -maxdepth 3 -type d -name .git ); do
-    echo $dir ; cd $dir/..  ; git fetch
+    echo $dir ; cd $dir/..  ; git fetch ; git gc
 done
 
 cd $ORIGDIR
