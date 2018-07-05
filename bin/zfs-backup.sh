@@ -1,7 +1,7 @@
 #!/bin/bash -e
 HOST=${1:-oxygen-vpn}
 POOL=WDZBA365
-TARGET=backups/cubits
+TARGET=backups/thoughtworks
 SOURCE=
 USER=root
 
