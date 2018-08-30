@@ -1,7 +1,7 @@
 #!/bin/bash -e
-HOST=${1:-oxygen-vpn}
-POOL=WDZBA365
-TARGET=backups/thoughtworks
+HOST=${1:-boron-vpn}
+POOL=boron
+TARGET=backups/work/thoughtworks
 SOURCE=
 USER=root
 
