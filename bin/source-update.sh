@@ -16,8 +16,7 @@ case $(uname -s) in
 esac
 
 for dir in $($FINDCMD $SOURCEDIR -mindepth 1 -maxdepth 3 -type d -name .svn ); do
-    echo $dir ; cd $dir/.. ; svn upgrade
-    echo $dir ; cd $dir/.. ; svn up
+    echo $dir ; cd $dir/.. ; svn upgrade ; svn up
 done
 
 for dir in $($FINDCMD $SOURCEDIR -mindepth 1 -maxdepth 3 -type d -name CVS ); do
