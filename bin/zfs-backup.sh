@@ -6,6 +6,10 @@ TARGET=backups/uuid/$UUID
 SOURCE=
 USER=root
 
+ssh -F $HOME/.ssh/config \
+    $USER@$HOST \
+    "[ -e /$POOL/$TARGET/ ]"
+
 caffeinate sudo -E rsync \
     --rsh "ssh -F $HOME/.ssh/config" \
     --compress \
