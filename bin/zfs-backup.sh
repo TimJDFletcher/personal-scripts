@@ -1,7 +1,8 @@
 #!/bin/bash -e
 HOST=${1:-boron-vpn}
 POOL=boron
-TARGET=backups/macbook
+UUID=$(ioreg -ad2 -c IOPlatformExpertDevice | xmllint --xpath '//key[.="IOPlatformUUID"]/following-sibling::*[1]/text()' -)
+TARGET=backups/uuid/$UUID
 SOURCE=
 USER=root
 
