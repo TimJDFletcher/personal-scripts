@@ -1,7 +1,7 @@
 #!/bin/bash -e
 HOST=${1:-boron-vpn}
 POOL=boron
-TARGET=backups/work/thoughtworks
+TARGET=backups/macbook
 SOURCE=
 USER=root
 
