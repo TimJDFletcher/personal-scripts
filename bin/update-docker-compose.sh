@@ -5,7 +5,7 @@ TEMP=$(mktemp /tmp/docker-compose.XXXXXX)
 DEST=/usr/local/bin/docker-compose
 
 COMPOSE_VERSION=$(git ls-remote https://github.com/docker/compose | grep refs/tags | grep -oP "[0-9]+\.[0-9][0-9]+\.[0-9]+$" | tail -n 1)
-COMPOSE_SHA256=$(curl -s -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-${OS}-${ARCH}.sha256 )
+COMPOSE_SHA256=$(curl -s -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-${OS}-${ARCH}.sha256 | awk '{print $1}')
 
 checklocal()
 {
