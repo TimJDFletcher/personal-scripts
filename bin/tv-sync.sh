@@ -8,13 +8,14 @@ _rsync()
 {
     echo "Copying TV from $PWD to ${HOST}:${TARGET_DIR}"
         rsync \
-            --archive \
+            --recursive \
             --verbose \
             --progress \
+            --bwlimit 500K \
             --filter="+ *.mkv" \
             --filter="+ *.mp4" \
             --filter="- *" \
-            ${HOST}:${TARGET_DIR}
+            . ${HOST}:${TARGET_DIR}
 }
 
 cat $HOME/tv.list | while read line ; do 
