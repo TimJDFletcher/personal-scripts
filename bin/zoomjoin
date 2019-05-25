@@ -1,0 +1,3 @@
+#!/bin/bash
+set -eu 
+open 'zoommtg://zoom.us/join?action=join&confno='${1}
