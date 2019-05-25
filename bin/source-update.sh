@@ -32,7 +32,7 @@ for dir in $($FINDCMD $SOURCEDIR -mindepth 1 -maxdepth 3 -type d -name .bzr ); d
 done
 
 for dir in $($FINDCMD $SOURCEDIR -mindepth 1 -maxdepth 3 -type d -name .git ); do
-    echo $dir ; cd $dir/..  ; git fetch ; git gc
+    echo $dir ; cd $dir/..  ; git fetch ; git prune ; git gc
 done
 
 cd $ORIGDIR
