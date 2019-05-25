@@ -1,6 +1,6 @@
 #!/bin/sh
 filename=$1
-bytesize=$(gdu --apparent-size --bytes $filename | awk '{print $1}')
+bytesize=$(du --apparent-size --bytes $filename | awk '{print $1}')
 blocksize=512
 disksize=$((bytesize/blocksize))
 CID=$(dd if=/dev/urandom bs=1k count=1 2>/dev/null| crc32 /dev/stdin)
