@@ -3,7 +3,7 @@ HOST=${1:-boron-vpn}
 POOL=boron
 UUID=$(ioreg -ad2 -c IOPlatformExpertDevice | xmllint --xpath '//key[.="IOPlatformUUID"]/following-sibling::*[1]/text()' -)
 TARGET=backups/uuid/$UUID
-SOURCE=
+SOURCE=/System/Volumes/Data/
 USER=root
 
 ssh -F $HOME/.ssh/config \
