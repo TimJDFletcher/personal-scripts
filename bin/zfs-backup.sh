@@ -1,17 +1,20 @@
 #!/bin/bash
 set -e -u -o pipefail
-HOST=${1:-boron-vpn}
-POOL=boron
+HOST=${ZFS_BACKUP_HOST:-boron-vpn}
+POOL=${ZFS_BACKUP_POOL:-boron}
 UUID=$(ioreg -ad2 -c IOPlatformExpertDevice | xmllint --xpath '//key[.="IOPlatformUUID"]/following-sibling::*[1]/text()' -)
 TARGET=backups/uuid/$UUID
 SOURCE=/System/Volumes/Data
 USER=root
-SPEEDLIMIT=${SPEEDLIMIT:-500K}
+SPEEDLIMIT=${ZFS_BACKUP_SPEEDLIMIT:-500K}
 
-ssh -F $HOME/.ssh/config \
-    $USER@$HOST \
-    "[ -e /$POOL/$TARGET/ ]"
+check_target_exists() {
+    ssh -F $HOME/.ssh/config \
+        $USER@$HOST \
+            "[ -e /$POOL/$TARGET/ ]"
+}
 
+do_backup() {
 caffeinate sudo -E rsync \
     --rsh "ssh -F $HOME/.ssh/config" \
     --compress \
@@ -28,3 +31,7 @@ caffeinate sudo -E rsync \
     --delete \
     --delete-after \
     $SOURCE/ $USER@$HOST:/$POOL/$TARGET/
+}
+
+check_target_exists
+do_backup
