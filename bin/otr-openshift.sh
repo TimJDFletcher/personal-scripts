@@ -1,1 +1,0 @@
-/Users/tim/Projects/OTR/tooling/openshift/otr-openshift.sh
