@@ -1,22 +1,20 @@
 #!/bin/sh
-image=openwrt-ar71xx-generic-tl-wr703n-v1-squashfs-sysupgrade.bin
-arch=ar71xx
+set -e -u
+image=openwrt-ipq806x-generic-netgear_r7800-squashfs-sysupgrade.bin
+arch=ipq806x/generic
 tempdir=$(mktemp -d /tmp/sysupgrade.XXXXXX )
+packages="coreutils-sha256sum ca-bundle ca-certificates libustream-openssl"
+
+opkg update
+opkg install ${packages}
 
 cd $tempdir
-wget http://downloads.openwrt.org/snapshots/trunk/$arch/$image
-wget http://downloads.openwrt.org/snapshots/trunk/$arch/md5sums
+wget https://downloads.openwrt.org/snapshots/targets/$arch/$image
+wget https://downloads.openwrt.org/snapshots/targets/$arch/sha256sums
 
-md5sum_download=$(grep $image md5sums | awk '{print $1}')
-md5sum_calc=$(md5sum $image | awk '{print $1}')
+sha256sum --ignore-missing -c sha256sums
 
-if [ $md5sum_download = $md5sum_calc ] ; then
-	echo md5sum confirmed, flashing in 10 seconds
-	sleep 10
-	sysupgrade -v $tempdir/$image
-else
-	echo md5sum does not match, aborting
-	echo check $tempdir
-	exit 1
-fi
+echo sha256 checksum confirmed, flashing in 10 seconds
+sleep 10
+sysupgrade -v $tempdir/$image
 
