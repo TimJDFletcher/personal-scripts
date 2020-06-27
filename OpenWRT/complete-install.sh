@@ -1,20 +1,20 @@
 #!/bin/sh
-packages="vim openvpn rsync empty mjpg-streamer bmon tc ip"
-modules="iptables-mod-conntrack-extra kmod-leds-wndr3700-usb kmod-video-uvc"
-services="openvpn mjpg-streamer"
+packages="avahi-daemon-service-ssh bmon etherwake tor sqm-scripts"
+services="tor sqm"
 
-if [ -f /.install.completed ] ; then
-	echo Install already completed
-	exit 0
+set -e -u
+
+if [ -f /.install.completed ]; then
+  echo Install already completed
+  exit 0
 fi
 
 opkg update
-opkg install $modules
-opkg install $packages
+opkg install ${packages}
 
-for service in $services ; do 
-	/etc/init.d/$service enable
-	/etc/init.d/$service start
+for service in $services; do
+  /etc/init.d/${service} enable
+  /etc/init.d/${service} start
 done
 
 /etc/init.d/firewall restart
