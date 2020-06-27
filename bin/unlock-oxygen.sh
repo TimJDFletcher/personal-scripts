@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu -o pipefail
 
-host=root@192.168.0.2
+host=root@oxygen
 
 _print_password ()
 {
