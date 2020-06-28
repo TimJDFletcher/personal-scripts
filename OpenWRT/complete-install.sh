@@ -1,5 +1,6 @@
 #!/bin/sh
-packages="avahi-daemon-service-ssh bmon etherwake tor sqm-scripts"
+ssl_support="ca-bundle ca-certificates libustream-openssl"
+packages="avahi-daemon-service-ssh bmon etherwake tor sqm-scripts ipset ${ssl_support}"
 services="tor sqm"
 
 set -e -u
