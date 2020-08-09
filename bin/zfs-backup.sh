@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e -u -o pipefail
-HOST=${ZFS_BACKUP_HOST:-boron-vpn}
+HOST=${ZFS_BACKUP_HOST:-boron.vpn.night-shade.org.uk}
 POOL=${ZFS_BACKUP_POOL:-boron}
 UUID=$(ioreg -ad2 -c IOPlatformExpertDevice | xmllint --xpath '//key[.="IOPlatformUUID"]/following-sibling::*[1]/text()' -)
 TARGET=backups/uuid/$UUID
