@@ -16,7 +16,7 @@ check_target_exists() {
 
 do_backup() {
 caffeinate sudo -E rsync \
-    --rsh "ssh -F $HOME/.ssh/config" \
+    --rsh "ssh -F $HOME/.ssh/config -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
     --compress \
     --archive \
     --bwlimit ${SPEEDLIMIT} \
