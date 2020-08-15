@@ -17,19 +17,20 @@ check_target_exists() {
 do_backup() {
 caffeinate sudo -E rsync \
     --rsh "ssh -F $HOME/.ssh/config -o UserKnownHostsFile=$HOME/.ssh/known_hosts" \
-    --compress \
     --archive \
     --bwlimit ${SPEEDLIMIT} \
-    --hard-links \
-    --partial \
-    --verbose \
-    --progress \
-    --one-file-system \
-    --numeric-ids \
-    --ignore-errors \
-    --inplace \
+    --compress \
+    --compress-choice=lz4 \
     --delete \
     --delete-after \
+    --hard-links \
+    --ignore-errors \
+    --inplace \
+    --numeric-ids \
+    --one-file-system \
+    --partial \
+    --progress \
+    --verbose \
     $SOURCE/ $USER@$HOST:/$POOL/$TARGET/
 }
 
