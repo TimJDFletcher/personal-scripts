@@ -1,5 +1,5 @@
 #!/bin/sh
-ssl_support="ca-bundle ca-certificates libustream-openssl"
+ssl_support="ca-bundle ca-certificates"
 packages="avahi-daemon-service-ssh bmon etherwake tor sqm-scripts ipset ${ssl_support}"
 services="tor sqm"
 
