@@ -1,11 +1,11 @@
 #!/bin/bash
 set -eu -o pipefail
 
-host=root@192.168.8.2
+host=oxygen-initramfs
 
 _print_password ()
 {
-    gopass show disks/oxygen/root
+    gopass show --password disks/oxygen/root
 }
 
 _ensure_gopass_latest ()
