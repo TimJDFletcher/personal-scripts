@@ -16,13 +16,13 @@ ROOTFS=/dev/mmcblk0p2
 
 # Raspberry Pi 4
 # Currently has no PCIe bus so no usb or network...
-#DTB=bcm2711-rpi-4-b.dtb
-#MACHINE=raspi4b
-#CPU=cortex-a72
-#CORES=4
-#RAM=2G
-#ROOTFS=/dev/mmcblk1p2
-#CONSOLE=ttyAMA1,115200
+# DTB=bcm2711-rpi-4-b.dtb
+# MACHINE=raspi4b
+# CPU=cortex-a72
+# CORES=4
+# RAM=2G
+# ROOTFS=/dev/mmcblk1p2
+# CONSOLE=ttyAMA1,115200
 
 # Shared parms
 KERNEL=kernel8.img
