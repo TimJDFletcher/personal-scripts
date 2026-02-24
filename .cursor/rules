@@ -142,10 +142,74 @@ ssh root@$1 "command"
 - `Windows/sysprep-w7` is for Windows 7 era
 - OpenWRT scripts reference older versions (15.05-rc3, Chaos Calmer)
 
+## Common Issues Found
+
+### Typos to Watch For
+- `vaildtime` → `validtime` (found in multiple openssh/sign-key*.sh scripts)
+- Check spelling in variable names when reviewing scripts
+
+### Argument Handling
+- Use `"$@"` not `$*` for passing arguments (preserves quoting)
+- Example fix: `ssh $HOST command $*` → `ssh "$HOST" command "$@"`
+
+### Legacy/Deprecated Scripts
+These scripts reference defunct or EOL software:
+
+| Script | Issue |
+|--------|-------|
+| `Ubuntu/ubuntu-desktop-post-install.sh` | Medibuntu (shut down 2013), Unity, w32codecs |
+| `Ansible/ansible-venv.sh` | Python 2 packages, Ansible 2.2 (current is 2.15+) |
+| `macOS/skype-for-business-perms.sh` | Skype for Business deprecated, TCC database method may not work |
+| `guestfs/bare-ubuntu-14.04` | Ubuntu 14.04 EOL |
+| `Windows/sysprep-w7/` | Windows 7 EOL |
+| `bin/csr-generate.sh` | Hardcoded company info for "Late Rooms Limited" |
+
+### Scripts with Manual Error Handling
+These scripts have their own error handling and should NOT have `set -e` added:
+- `ZFS/zfs-control.sh` - Complex state machine with explicit exit codes
+- `bin/gpg-tidy.sh` - Expects some operations to fail, reports per-key status
+- `Yubikey/yubikey-screen-lock` - Probes multiple desktop environments
+
 ## Recent Changes (Feb 2026)
 
+### Session 1
 - Added comprehensive README documentation
 - Fixed bug in `connection-checker.sh` (lockfile time comparison)
 - Added `set -e` error handling to 12 key scripts
 - Added RPi 3B+/4 kernel and DTB files for QEMU emulation
 - Created this rules file for AI assistant context
+
+### Session 2
+- Fixed `vaildtime` typo in 3 openssh scripts
+- Fixed `$*` → `$@` in `bin/remote-tcpdump.sh`
+- Added `set -e` and proper quoting to 9 more scripts
+- Documented legacy scripts in README
+- Expanded this rules file with common issues
+
+## Scripts Modified with Error Handling
+
+The following scripts have been updated with `set -e` and improved quoting:
+
+```
+bin/connection-checker.sh (bug fix)
+bin/dns-flush.sh
+bin/eject-all.sh
+bin/ilo-forward.sh
+bin/luks-header-backup.sh
+bin/qr-show.sh
+bin/remote-tcpdump.sh
+Cisco/ios-backup.sh
+GRML/build-iso.sh
+KVM/virsh-backup.sh
+libvirt/nightly-backup.sh
+openssh/sign-key.sh
+openssh/sign-key-backuppc.sh
+openssh/sign-key-df.sh
+OpenWRT/stable-upgrade.sh
+Photos/photos-backup.sh
+RaspberryPi/raspbian-post-install.sh
+Torrents/torrent-tidy.sh
+Ubuntu/ubuntu-kernel-tidy.sh
+VMWare/esxi-rsync.sh
+Yubikey/export-my-key.sh
+```
