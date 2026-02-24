@@ -86,6 +86,26 @@ ZFS_BACKUP_HOST=myserver.local ./bin/zfs-backup.sh
 ./RaspberryPi/launch-qemu-rpi.sh raspbian.img
 ```
 
+## Notes
+
+### Legacy Scripts
+
+Some scripts reference deprecated software or older system versions and may need updates:
+
+| Script | Notes |
+|--------|-------|
+| `Ubuntu/ubuntu-desktop-post-install.sh` | References Medibuntu (defunct), Unity |
+| `Ansible/ansible-venv.sh` | Uses Python 2, Ansible 2.2 |
+| `macOS/skype-for-business-perms.sh` | Skype for Business is deprecated |
+| `guestfs/bare-ubuntu-14.04` | Ubuntu 14.04 is EOL |
+| `Windows/sysprep-w7/` | Windows 7 is EOL |
+
+### Platform Requirements
+
+- **macOS scripts**: Tested on macOS, may use Homebrew
+- **Linux scripts**: Various distros (Ubuntu, Debian, RHEL, OpenWRT)
+- **Virtualization**: Requires QEMU/KVM, libvirt, or VMware
+
 ## License
 
 See [LICENSE](LICENSE) for details.

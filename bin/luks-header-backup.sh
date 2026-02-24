@@ -1,6 +1,7 @@
 #!/bin/sh
+set -e
 target=/var/run/luks
-mkdir -p $target
+mkdir -p "$target"
 for partition in $(egrep dm\|sd < /proc/partitions | awk '{print $4}' ) ; do
 	if cryptsetup isLuks /dev/$partition ; then
 		UUID=$(cryptsetup luksUUID /dev/$partition)

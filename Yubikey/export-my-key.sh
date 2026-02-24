@@ -1,5 +1,6 @@
 #!/bin/bash
-mkdir -p ${LOGNAME}
+set -e
+mkdir -p "${LOGNAME}"
 
 # Grab serial number of connected Yubikey
 yk_serial=$(gpg --batch --card-status| grep "^Serial number" | awk '{print $NF}')
