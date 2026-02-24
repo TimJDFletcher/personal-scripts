@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 arch=ar71xx
 hardware=wndr3700v2
 tempdir=$(mktemp -d /tmp/sysupgrade.XXXXXX )

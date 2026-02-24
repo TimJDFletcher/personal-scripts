@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 switches="missionas02.adm missionas06.adm missionas07.adm hadfieldas01.adm"
 coreswitches="missioncs01.adm missioncs02.adm"
 aps="missionap1.adm missionap2.adm"

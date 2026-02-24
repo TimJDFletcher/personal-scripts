@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 keyboard=uk
 isosource=../grml64-full_testing_latest.iso 
 isoout=../grml64-full_testing_latest_sshkeys.iso

@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 runningversion=$(dpkg-query -W linux-image-`uname -r` | awk '{print $1}')
 latestversion=$(dpkg-query -S /boot/vmlinuz* | cut -d ":" -f 1 | grep -vF $runningversion | tail -n 1)
 
