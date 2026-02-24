@@ -1,91 +1,129 @@
 # Personal Scripts Repository
 
-This is a collection of personal shell scripts, configuration files, and utilities organized by topic/platform.
+This is a collection of personal shell scripts, configuration files, and utilities organized by topic/platform. The repository has been maintained over many years and contains scripts for various systems and purposes.
 
 ## Repository Structure
 
 ### General Utilities (`bin/`)
 ~146 utility scripts for various tasks including:
-- AWS operations (`aws-*.sh`)
-- Backup tools (`zfs-backup.sh`, `backuppc-*.sh`)
-- Media processing (`audio-*.sh`, `video-*.sh`)
-- Network utilities (`vpn-*.sh`, `remote-tcpdump.sh`)
-- System maintenance (`brew-update.sh`, `dns-flush.sh`)
-- GPG/SSH key management (`gpg-tidy.sh`, `ssl-to-ssh.sh`)
+- **AWS**: `aws-*.sh` - account management, credential handling, environment setup
+- **Backup**: `zfs-backup.sh` (well-written, uses `set -e -u -o pipefail`), `backuppc-*.sh`
+- **Media**: `audio-*.sh`, `video-*.sh` - extraction and processing
+- **Network**: `vpn-*.sh`, `remote-tcpdump.sh`, `connection-checker.sh`
+- **System**: `brew-update.sh`, `dns-flush.sh`, `gpg-tidy.sh`
+- **GPG/SSH**: `ssl-to-ssh.sh`, `reload-gpg-agent.sh`, `restart-gpg-agent.sh`
 
 ### Platform-Specific
 
-| Directory | Purpose |
-|-----------|---------|
-| `macOS/` | macOS-specific scripts and fixes |
-| `Linux/` | Linux kernel tools, OVS scripts |
-| `Windows/` | PowerShell scripts, sysprep configs, Cygwin tools |
-| `Ubuntu/` | Ubuntu/Debian package management, post-install scripts |
-| `Debian/` | Debian-specific (chroot, jigdo) |
-| `RedHat/` | RHEL/CentOS post-install scripts |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `macOS/` | macOS-specific scripts | `dns-flush.sh` uses mDNSResponder |
+| `Linux/` | Kernel tools, OVS scripts | `dmesg_with_human_timestamps`, `extract-ikconfig` |
+| `Windows/` | PowerShell, sysprep, Cygwin | Contains `WEMS-Updater/` subdirectory |
+| `Ubuntu/` | Package management, post-install | Desktop and server variants |
+| `Debian/` | Chroot setup, Jigdo updates | Older Debian tooling |
+| `RedHat/` | RHEL/CentOS post-install | VMware tools installation |
 
 ### Hardware & Embedded
 
-| Directory | Purpose |
-|-----------|---------|
-| `RaspberryPi/` | RPi setup, QEMU emulation, i2c-rtc config |
-| `iconnect/` | iConnect device kernel flashing |
-| `gPXE/` | PXE boot configurations |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `RaspberryPi/` | RPi setup, QEMU emulation | Contains kernel/dtb for 64-bit QEMU |
+| `iconnect/` | iConnect device flashing | Kernel flashing scripts |
+| `gPXE/` | PXE boot configurations | Legacy boot configs |
 
 ### Networking
 
-| Directory | Purpose |
-|-----------|---------|
-| `Cisco/` | IOS configuration, SSH key deployment, VPN tools |
-| `OpenWRT/` | Router backup, upgrade, and configuration |
-| `openssh/` | SSH certificates, signing scripts, public keys |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `Cisco/` | IOS configuration, backups | `ios-backup.sh` backs up to git + GPG |
+| `OpenWRT/` | Router backup/upgrade | `openwrt-backup.sh` is well-written |
+| `openssh/` | SSH certificates, signing | Multiple YubiKey public keys stored here |
 
 ### Virtualization
 
-| Directory | Purpose |
-|-----------|---------|
-| `KVM/` | QEMU/KVM VM launch scripts |
-| `VMWare/` | ESXi management, VMDK tools |
-| `libvirt/` | Libvirt network/storage configs |
-| `guestfs/` | Libguestfs image manipulation |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `KVM/` | QEMU/KVM VM scripts | Many VM launch scripts for different OSes |
+| `VMWare/` | ESXi management | `pvscsi-drivers/` subdirectory |
+| `libvirt/` | Libvirt XML configs | Network and storage definitions |
+| `guestfs/` | Libguestfs manipulation | `bare-ubuntu-14.04` template |
 
 ### Storage
 
-| Directory | Purpose |
-|-----------|---------|
-| `ZFS/` | ZFS backup and control scripts |
-| `flash-cache/` | Flashcache synchronization |
-| `FIO/` | Flexible I/O tester configs |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `ZFS/` | ZFS backup and control | `zfs-control.sh` manages LUKS+ZFS pools |
+| `flash-cache/` | Flashcache sync | SSD caching layer |
+| `FIO/` | I/O benchmark configs | `fio-config/` subdirectory |
 
 ### Security
 
-| Directory | Purpose |
-|-----------|---------|
-| `Yubikey/` | YubiKey udev rules, screen lock integration |
-| `Security/` | Security tools (use with caution) |
-| `xinetd/` | xinetd service configs |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `Yubikey/` | YubiKey integration | Screen lock on removal, udev rules |
+| `Security/` | Security tools | **DANGER**: `system-nuke.sh` is destructive |
+| `xinetd/` | Service forwarding | Port forwarding configs |
 
 ### Applications
 
-| Directory | Purpose |
-|-----------|---------|
-| `Torrents/` | Transmission management scripts |
-| `Photos/` | Photo processing (RAW conversion, HDR, backup) |
-| `Ansible/` | Ansible playbooks and venv setup |
-| `GRML/` | GRML live system customization |
+| Directory | Purpose | Notes |
+|-----------|---------|-------|
+| `Torrents/` | Transmission management | Cleanup and helper scripts |
+| `Photos/` | Photo processing | RAW conversion, HDR, backup to ZFS |
+| `Ansible/` | Ansible tooling | `rsync-caps.yaml` playbook |
+| `GRML/` | GRML live system | Custom ISO building |
+
+## Key Scripts Reference
+
+### High-Quality Examples (use as templates)
+- `bin/zfs-backup.sh` - Proper error handling, env var config with defaults
+- `bin/tv-sync.sh` - Uses `set -eu -o pipefail`, good function structure
+- `OpenWRT/openwrt-backup.sh` - Clean, uses GPG encryption
+
+### Scripts Requiring Caution
+- `Security/system-nuke.sh` - Wipes system based on DNS trigger (intentionally no `set -e`)
+- `ZFS/zfs-control.sh` - Manages encrypted ZFS pools, has manual error handling
+- `Yubikey/yubikey-screen-lock` - Detects desktop environment, intentionally permissive
+
+### Hardcoded Values (personal config)
+Many scripts contain hardcoded personal values:
+- Email: `tim@night-shade.org.uk`
+- Hostnames: `boron.vpn.night-shade.org.uk`, `oxygen.vpn.night-shade.org.uk`
+- GPG keys: `E22C70C4`
+- Paths: `/oxygen.zfs/`, `/iscsi/`, `/archives/`
 
 ## Code Conventions
 
 ### Shell Scripts
-- Most scripts use `#!/bin/bash` shebang
+- Mix of `#!/bin/sh` and `#!/bin/bash` - check for bashisms when using `/bin/sh`
 - Better scripts use `set -e -u -o pipefail` for safety
-- Environment variables often used for configuration with defaults: `${VAR:-default}`
+- Environment variables for configuration: `${VAR:-default}`
 - Scripts are generally self-contained utilities
 
-### Style Notes
-- Inconsistent use of error handling across scripts (some use `set -e`, some don't)
-- Mix of quoting styles
-- Some scripts have inline documentation, many are minimal
+### Error Handling Patterns
+```bash
+# Preferred for most scripts
+set -e
+
+# For scripts with complex error handling needs
+set -e -u -o pipefail
+
+# Scripts that should NOT use set -e:
+# - brew-update.sh (brew upgrade returns non-zero if nothing to upgrade)
+# - Security/system-nuke.sh (must continue on failure)
+# - Yubikey/yubikey-screen-lock (handles missing desktop environments)
+```
+
+### Variable Quoting
+Many scripts have unquoted variables. When editing, prefer quoted variables:
+```bash
+# Prefer this
+ssh "root@$1" "command"
+
+# Over this
+ssh root@$1 "command"
+```
 
 ## When Editing
 
@@ -93,10 +131,21 @@ This is a collection of personal shell scripts, configuration files, and utiliti
 2. **Add `set -e` error handling** when making significant changes
 3. **Test on appropriate platform** - many scripts are platform-specific
 4. **Be cautious with Security/** - contains destructive tools
+5. **Check shebang** - ensure bashisms aren't used in `#!/bin/sh` scripts
+6. **Quote variables** - especially those from user input or containing paths
 
-## Current Work (as of staged changes)
+## Historical Context
 
-The `RaspberryPi/` directory has recent updates for QEMU emulation:
-- Added device tree blobs for RPi 3B+ and RPi 4
-- Added kernel image for 64-bit emulation
-- Updated `launch-qemu-rpi.sh` with improved QEMU configuration
+- Repository contains scripts spanning many years
+- Some reference deprecated tools: f-spot, Skype for Business, Ubuntu 14.04
+- `guestfs/bare-ubuntu-14.04` is a legacy template
+- `Windows/sysprep-w7` is for Windows 7 era
+- OpenWRT scripts reference older versions (15.05-rc3, Chaos Calmer)
+
+## Recent Changes (Feb 2026)
+
+- Added comprehensive README documentation
+- Fixed bug in `connection-checker.sh` (lockfile time comparison)
+- Added `set -e` error handling to 12 key scripts
+- Added RPi 3B+/4 kernel and DTB files for QEMU emulation
+- Created this rules file for AI assistant context
