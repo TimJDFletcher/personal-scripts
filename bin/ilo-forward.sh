@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 target=192.168.1.157
 ssh \
 -L 1080:$target:443 \
