@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 packages="openssh-server ntpdate bash-completion nano ntp ntpdate nmap tcpdump bmon 
 git-core subversion rsync build-essential watchdog screen avahi-daemon"
 

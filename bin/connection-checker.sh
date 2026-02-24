@@ -51,7 +51,8 @@ failtest)
 esac
 
 if [ -f $lockfile ] ; then
-	if [ $time -gt $(($time-$locktime)) ] ; then
+	lockfiletime=$(date +%s -r $lockfile)
+	if [ $time -gt $((lockfiletime + locktime)) ] ; then
 		logger -t $logname Lock file over $locktime seconds old, assuming something has broken calling reset
 		count=0
 		resetcmd

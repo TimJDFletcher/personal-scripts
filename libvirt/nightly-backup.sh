@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Wait up to an hour before starting backups
 sleep $[ ( $RANDOM % 3600 )  + 1 ]s

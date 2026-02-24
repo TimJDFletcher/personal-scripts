@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 dom=$1
 disks=$(virsh domblklist --details $dom | grep disk | awk '{print $3}')
 date=$(date +%s)

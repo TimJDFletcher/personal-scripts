@@ -1,0 +1,102 @@
+# Personal Scripts Repository
+
+This is a collection of personal shell scripts, configuration files, and utilities organized by topic/platform.
+
+## Repository Structure
+
+### General Utilities (`bin/`)
+~146 utility scripts for various tasks including:
+- AWS operations (`aws-*.sh`)
+- Backup tools (`zfs-backup.sh`, `backuppc-*.sh`)
+- Media processing (`audio-*.sh`, `video-*.sh`)
+- Network utilities (`vpn-*.sh`, `remote-tcpdump.sh`)
+- System maintenance (`brew-update.sh`, `dns-flush.sh`)
+- GPG/SSH key management (`gpg-tidy.sh`, `ssl-to-ssh.sh`)
+
+### Platform-Specific
+
+| Directory | Purpose |
+|-----------|---------|
+| `macOS/` | macOS-specific scripts and fixes |
+| `Linux/` | Linux kernel tools, OVS scripts |
+| `Windows/` | PowerShell scripts, sysprep configs, Cygwin tools |
+| `Ubuntu/` | Ubuntu/Debian package management, post-install scripts |
+| `Debian/` | Debian-specific (chroot, jigdo) |
+| `RedHat/` | RHEL/CentOS post-install scripts |
+
+### Hardware & Embedded
+
+| Directory | Purpose |
+|-----------|---------|
+| `RaspberryPi/` | RPi setup, QEMU emulation, i2c-rtc config |
+| `iconnect/` | iConnect device kernel flashing |
+| `gPXE/` | PXE boot configurations |
+
+### Networking
+
+| Directory | Purpose |
+|-----------|---------|
+| `Cisco/` | IOS configuration, SSH key deployment, VPN tools |
+| `OpenWRT/` | Router backup, upgrade, and configuration |
+| `openssh/` | SSH certificates, signing scripts, public keys |
+
+### Virtualization
+
+| Directory | Purpose |
+|-----------|---------|
+| `KVM/` | QEMU/KVM VM launch scripts |
+| `VMWare/` | ESXi management, VMDK tools |
+| `libvirt/` | Libvirt network/storage configs |
+| `guestfs/` | Libguestfs image manipulation |
+
+### Storage
+
+| Directory | Purpose |
+|-----------|---------|
+| `ZFS/` | ZFS backup and control scripts |
+| `flash-cache/` | Flashcache synchronization |
+| `FIO/` | Flexible I/O tester configs |
+
+### Security
+
+| Directory | Purpose |
+|-----------|---------|
+| `Yubikey/` | YubiKey udev rules, screen lock integration |
+| `Security/` | Security tools (use with caution) |
+| `xinetd/` | xinetd service configs |
+
+### Applications
+
+| Directory | Purpose |
+|-----------|---------|
+| `Torrents/` | Transmission management scripts |
+| `Photos/` | Photo processing (RAW conversion, HDR, backup) |
+| `Ansible/` | Ansible playbooks and venv setup |
+| `GRML/` | GRML live system customization |
+
+## Code Conventions
+
+### Shell Scripts
+- Most scripts use `#!/bin/bash` shebang
+- Better scripts use `set -e -u -o pipefail` for safety
+- Environment variables often used for configuration with defaults: `${VAR:-default}`
+- Scripts are generally self-contained utilities
+
+### Style Notes
+- Inconsistent use of error handling across scripts (some use `set -e`, some don't)
+- Mix of quoting styles
+- Some scripts have inline documentation, many are minimal
+
+## When Editing
+
+1. **Preserve existing style** within each script
+2. **Add `set -e` error handling** when making significant changes
+3. **Test on appropriate platform** - many scripts are platform-specific
+4. **Be cautious with Security/** - contains destructive tools
+
+## Current Work (as of staged changes)
+
+The `RaspberryPi/` directory has recent updates for QEMU emulation:
+- Added device tree blobs for RPi 3B+ and RPi 4
+- Added kernel image for 64-bit emulation
+- Updated `launch-qemu-rpi.sh` with improved QEMU configuration
