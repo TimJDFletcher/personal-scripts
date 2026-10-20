@@ -15,7 +15,7 @@ _ensure_gopass_latest ()
 
 unlock_remote_luks ()
 {
-    _print_password | ssh $host cryptroot-unlock
+    _print_password | ssh -o HostKeyAlgorithms=+ecdsa-sha2-nistp256,rsa-sha2-256 $host cryptroot-unlock
 }
 
 unlock_remote_luks
